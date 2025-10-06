@@ -15,16 +15,12 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class BookListSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source='author.name')
-    publisher = serializers.CharField(source='publisher.name')
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'publisher', 'genre', 'price', 'popularity']
+        fields = '__all__'
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source='author.name')
-    publisher = serializers.CharField(source='publisher.name')
     class Meta:
         model = Book
         fields = '__all__'
