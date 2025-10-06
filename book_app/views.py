@@ -98,6 +98,11 @@ class AuthorDetail(APIView):
             author = Author.objects.get(pk=pk)
         except Author.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if Book.objects.filter(author=author).exists():
+            return Response({"error": "You cannot delete this author"
+                                      "(There are books with this author)"},
+                            status=status.HTTP_400_BAD_REQUEST)
         author.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -146,5 +151,11 @@ class PublisherDetail(APIView):
             publisher = Publisher.objects.get(pk=pk)
         except Publisher.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if Book.objects.filter(publisher=publisher).exists():
+            return Response({"error": "You cannot delete this publisher"
+                                      "(There are books with this publisher)"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         publisher.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
