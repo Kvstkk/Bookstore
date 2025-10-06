@@ -53,6 +53,7 @@ class BookDetail(APIView):
         book.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class AuthorList(APIView):
     def get(self, request):
         authors= Author.objects.all()
@@ -107,14 +108,43 @@ class PublisherList(APIView):
         serializer = PublisherSerializer(publishers, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = PublisherSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PublisherDetail(APIView):
     def get(self, request, pk):
-        publisher = Publisher.objects.get(pk=pk)
-        books = Book.objects.filter(publisher=publisher)
-        serializer_p = PublisherSerializer(publisher)
-        serializer_b = BookListSerializer(books,many=True)
+        try:
+            publisher = Publisher.objects.get(pk=pk)
+            books = Book.objects.filter(publisher=publisher)
+            serializer_p = PublisherSerializer(publisher)
+            serializer_b = BookListSerializer(books,many=True)
+        except Publisher.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         return Response({
             'publisher': serializer_p.data,
             'books': serializer_b.data
         })
+
+    def put(self, request, pk):
+        try:
+            publisher = Publisher.objects.get(pk=pk)
+        except Publisher.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PublisherSerializer(publisher, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            publisher = Publisher.objects.get(pk=pk)
+        except Publisher.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        publisher.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
