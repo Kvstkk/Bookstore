@@ -9,7 +9,7 @@ from book_app.serializers import BookDetailSerializer, BookListSerializer, Autho
 @api_view(['GET'])
 def index(request):
     if request.method == "GET":
-        return Response(({'a':'a'}))
+        return Response(({'This API has endpoints':'books, authors, publishers and ids'}))
 
 class BookList(APIView):
     def get(self, request):
